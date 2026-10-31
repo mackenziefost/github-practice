@@ -7,3 +7,10 @@ format:
     embed-resources: TRUE
 ---
 
+# Check project files with R
+
+```{r}
+list.files()
+list.files("data")
+```
+**🗣** The first command shows files and folders in my project folder. The second command checks what is inside the data folder.
