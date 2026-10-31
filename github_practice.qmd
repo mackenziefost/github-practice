@@ -1,0 +1,9 @@
+---
+title: "Github Practice"
+author: "Mackenzie Foster"
+date: today
+format: 
+  html:
+    embed-resources: TRUE
+---
+
