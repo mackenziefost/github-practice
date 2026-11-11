@@ -140,7 +140,7 @@ categorical_counts <- us_contagious_diseases %>%
 ```{r}
 # Check
 categorical_counts
-count(categorical_counts)
+nrow(categorical_counts)
 ```
 **🗣:** The `categorical_counts` includes 357 rows, which is congruent with the predicted `51 x 7 = 357` count.
 
