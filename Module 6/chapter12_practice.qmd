@@ -11,3 +11,122 @@ format:
     embed-resources: true
 ---
 
+
+# Task 0: Load Packages
+
+```{r}
+#| message: false
+#| warning: false
+library(dslabs)
+library(dplyr)
+```
+
+
+# Task 1: Concept Check
+`Question:` Which method returns a new vector with one result for every position? `Answer:` Vectorised conditional functions such as `ifelse()` and `case_when()` create a new vector with one result for every input position.
+
+
+# Task 2: Simple ifelse()
+
+```{r}
+heights <- dslabs::heights
+names(heights)
+```
+**🗣:** This data.frame includes two columns: [1] `sex` and [2] `height`, based on self-reported data (see: **R: Self-reported Heights in Inches**). To use `ifelse()` to label each `height` in the dataset as `"Tall"` if it is greater than `68`, we would assign `"Tall`" to the `yes` argument of `ifelse(test, yes, no)`.
+
+## Task 2.1
+**🎯:** This task includes assigning the label `"Tall"` to any height above `68` inches (e.g., `heights$height > 68`). Any height below that number will be classified as `"Not tall"`.
+
+**🐱:** The function for `height_label` will create a new vector with either the result `"Tall"` or `"Not tall"` for each position.
+```{r}
+height_label <- ifelse(
+  test = heights$height > 68,
+  yes = "Tall",
+  no = "Not Tall"
+)
+```
+
+```{r}
+table(height_label)
+length(height_label)
+nrow(heights)
+```
+**🗣:** The vector `height_label` includes 542 instances of `"Tall"`, and 508 instances of `"Not tall"`. Both `height_label` and `heights` include the same number of rows, 1050, which tells us that all entries in the `height` column was properly encoded in the `ifelse()` function.
+
+
+# Task 3: Recode with mutate() and case_when()
+**🎯:** This code will create a new data.frame from `mtcars` named `mpg_recode`. It will include a new column, `mpg_class`, with the categories `"High MPG"` if `mpg > 25`, `"Low MPG"` if `mpg < 15`, and `"Medium MPG"` for all other entries.
+
+```{r}
+mpg_recode <- mtcars %>%
+  mutate(mpg_class = case_when(
+    mpg > 25 ~ "High MPG",
+    mpg < 15 ~ "Low MPG",
+    TRUE     ~ "Medium MPG"
+  ))
+```
+
+```{r}
+table(mpg_recode$mpg_class)
+head(mpg_recode)
+```
+**🗣:** The function `table(mpg_recode$mpg_class)` shows the following answers for rows: `High MPG` (6), `Low MPG` (5), and `Medium MPG` (21). In this code, `mutate()` allows us to create a `data.frame` with the vector `case_when()` as a rule to logically subset the data.
+
+
+# Task 4: Recode: Name Focus
+
+```{r}
+# ?dslabs::stars
+stars <- dslabs::stars
+
+colnames(stars)
+summary(stars$temp)
+```
+**🗣:** The `stars` data.frame includes these four columns in order from left-to-right: `"star"`, `"magnitude"`, `"temp"`, and `"type"`. Of the columns, `"temp"` contains temperature (see: *R: Physical Properties of Stars**)
+
+## Task 4.1
+**🎯:** This code will create a new data.frame entitled `stars_recode` from the `stars` data set. It will include a new column, `temp_group`, with the categories `"Cool"` if `temp < 4000`, `"Warm"` if `temp <= 7500`, and `"Hot"` for all other entries. 
+```{r}
+stars_recode <- stars %>%
+  mutate(
+    temp_group = case_when(
+      temp < 4000  ~ "Cool",
+      temp <= 7500 ~ "Warm",
+      TRUE         ~ "Hot"
+    )
+  )
+```
+
+```{r}
+table(stars_recode$temp_group)
+head(stars_recode)
+```
+**🗣:** The function `table(stars_recode$temp_group` shows the following answers for rows: `Cool` (35), `Warm` (38), and `Hot` (23). The order in which operations occurs is important so that the most specific (e.g., `temp < 4000 ~ "Cool"`) condition is ran first, before the second condition, and finally all remaining, non-conditional entries are encoded.
+
+
+# Task 5: 
+
+```{r}
+# heights <- dslabs::heights  # This function was already performed earlier in Task 1.
+head(heights)
+summary(heights$height)
+```
+
+## Task 5.1
+**🎯:** This code will convert the numbers in the `height` column of the `heights` data set from inches to centimeters using `mutate()`.
+
+**🐱:** The data.frame `international_friendly_heights` will be written in centimeters. An inch is equal to about 2.54 inches, so the values in the `height` column will appear larger.
+```{r}
+international_friendly_heghts <- heights %>%
+  mutate(height = height * 2.54)
+```
+
+```{r}
+head(international_friendly_heghts)
+summary(international_friendly_heghts)
+```
+**🗣:** This code created overwrote a pre-existing column, `height`, in a new data.set, `international_friendly_heights`. The function `mutate(height = height * 2.54)` overwrote each value with a new value that is equal to the old value multiplied by 2.54 (an average conversion metric from inches to centimeters).
+
+
+# Task 6
+Including both `toc: true` and `toc-depth: 2` as well as task numbers in the header (e.g., `# Task 1`, or `# Task 2`) created a bit of visual confusion, given the table of contents starts at `1`, and the tasks start at `0`. Therefore, If I used `toc: true` for future documents, I would omit the numbering in the tasks as well and simply state the goal of that task as the header.
