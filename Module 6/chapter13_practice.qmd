@@ -1,0 +1,172 @@
+---
+title: "Chapter 13 Practice"
+subtitle: "group_by() and summarize()"
+author: "Mackenzie Foster"
+date: today
+format: 
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    embed-resources: true
+---
+
+## Loading Packages
+```{r}
+#| message: true
+#| warning: true
+library(dslabs)
+library(dplyr)
+```
+
+
+# Practice Space
+
+
+## Single grouping
+```{r}
+#| eval: false
+#| message: true
+#| warning: true
+#| include: false
+# Pre-check
+data(stars)
+?stars
+colnames(stars)
+unique(stars$type)
+```
+**🗣:** Column `type` is the grouping variable, while `magnitude` and `temp` are numeric summary variables.
+
+**🎯:** Calculate the `mean_temperature` and `mean_magnitude` for each star `type` using the `group_by()` and `summarize()` functions.
+```{r}
+# Code
+twinkle_twinkle <- stars %>%
+  group_by(type) %>%
+  summarize(
+    mean_temperature = mean(temp),
+    mean_magnitude = mean(magnitude),
+    .groups = "drop"
+  )
+```
+```{r}
+# Check
+twinkle_twinkle
+is_grouped_df(twinkle_twinkle)
+```
+
+**🗣:** The **check** shows one row for each star type: `A`, `B`, `DA`, `DB`, `DF`, `F`, `G`, `K`, `M`, and `O`. The `mean_temperature` column shows the average temperature of each star type; similarly, the `mean_magnitude` shows the average magnitude (i.e., illuminance) of each star type.
+
+
+## Single grouping + three statistics
+```{r}
+#| eval: false
+#| message: true
+#| warning: true
+#| include: false
+# Pre-check
+data(olive)
+?olive
+colnames(olive)
+unique(olive$region)
+```
+**🗣:** I will use the `eicosenoic` fatty acid variable with the `region` column as the grouping variable.
+
+**🎯:** Calculate the `mean()`, `sd()`, and `n()` of the `eicosenoic` column by `region`.
+```{r}
+# Pre-code variable
+fatty_acid <- "eicosenoic"
+
+# Code
+Olive_Garden <- olive %>%
+  group_by(region) %>%
+  summarize(
+    mean_value = mean(.data[[fatty_acid]], na.rm = TRUE),
+    sd_value   = sd(.data[[fatty_acid]], na.rm = TRUE),
+    n          = n(),
+    .groups = "drop"
+  )
+```
+```{r}
+# Check
+Olive_Garden
+arrange(Olive_Garden, desc(mean_value))
+is_grouped_df(Olive_Garden)
+```
+**🗣:** Southern Italy has the highest `mean_value` of `{r} fatty_acid`. The `n` column shows the number of rows in each region: Northern Italy (151), Sardinia (98), and Southern Italy (323).
+
+
+## Counting unique values
+```{r}
+#| eval: false
+#| message: true
+#| warning: true
+#| include: false
+# Pre-check
+data("us_contagious_diseases")
+?us_contagious_diseases
+colnames(us_contagious_diseases)
+```
+```{r}
+# Check unique diseases
+unique(us_contagious_diseases$disease)
+
+# Determine the number of unique diseases
+length(unique(us_contagious_diseases$disease))
+```
+
+**🗣:** There are `{r} length(unique(us_contagious_diseases$disease))` unique diseases within the `disease` column of the `us_contagious_diseases` dataset. They are `{r} paste(unique(us_contagious_diseases$disease), collapse = ", ")`.
+
+```{r}
+# Check unique states
+unique(us_contagious_diseases$state)
+
+# Determine the number of unique states
+length(unique(us_contagious_diseases$state))
+```
+**🗣:** There are `{r} length(unique(us_contagious_diseases$state))` distinct values within the `state` column of the `us_contagious_diseases` dataset.
+
+
+## Make and test a prediction
+**🎯:** Group `us_contagious_diseases` by both `state` and `disease` and report the number of groups created.
+
+**🐱:** There are `{r} length(unique(us_contagious_diseases$state))` states and `{r} length(unique(us_contagious_diseases$disease))` diseases, so the tibble created will likely include `51 x 7 = 357` groups.
+
+```{r}
+# Code
+categorical_counts <- us_contagious_diseases %>%
+  group_by(state, disease) %>%
+  count()
+```
+```{r}
+# Check
+categorical_counts
+count(categorical_counts)
+```
+**🗣:** The `categorical_counts` includes 357 rows, which is congruent with the predicted `51 x 7 = 357` count.
+
+
+## Mean reported counts by diseases
+**🎯:** Using the `us_contagious_diseases` dataset, create a summary column named `national_mean_count` that calculates the mean of `count` across `state` and `year` for each `disease`. Save only the three diseases with the highest values in that column in a data.frame named `Infectious_Burden`.
+
+```{r}
+# Code
+Infectious_Burden <- us_contagious_diseases %>%
+  group_by(disease) %>%
+  summarize(
+    national_mean_count = mean(count, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(national_mean_count)) %>%
+  slice_head(n = 3)
+```
+```{r}
+# Check
+Infectious_Burden
+nrow(Infectious_Burden)
+is_grouped_df(Infectious_Burden)
+```
+**🗣:** The `Infectious_Burden` data.frame includes data for `{r} paste(unique(Infectious_Burden$disease), collapse = ", ")`. The tibble is classified as `3 x 2`, with only two columns, `disease` and `national_mean_count`.
+
+
+## Final reflection
+**📝:** The function `group_by()` sorts the data.frame by the specified variables (e.g., region, disease, state, so on). Afterwards, the `summarize()` function can be used create the specified summaries for those specific variables. This function is also useful for creating new summary columns (e.g., `national_mean_count`), whereas `count()` can be used to simply create frequency tables for an entire dataset.
