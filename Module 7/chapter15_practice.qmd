@@ -1,0 +1,13 @@
+---
+title: "Chapter 15 Practice"
+subtitle: "Simulating Outcomes with R"
+author: "Mackenzie Foster"
+date: today
+format: 
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    embed-resources: true
+---
+
