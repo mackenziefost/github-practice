@@ -11,3 +11,134 @@ format:
     embed-resources: true
 ---
 
+# Key Terms
+
+## Using sample()
+- **Coin Flips** can be done with a function like `sample(x = 0:1, size = 1000, replace = TRUE)` where `0 = heads` and `1 = tails`.
+- **Dice Rolls** can be done with a function like `sample(1:6, 10000, replace = TRUE)` where `1:6` represents a six-sided die, trialed 10,000 times. The `prob =` argument in `sample()` can indicate fair or bias in probability.
+
+## Using hist()
+- **Histogram of [x]** can be created with the `hist()` function.
+
+## Using rnorm()
+- **Symmetric Data** can be calculated with `rnorm()`.
+
+## Using replicte()
+- **Monte Carlo simulations** used repeated sampling to estimate probabilities or study uncertainty using the `replicate()` function. In example:
+- `rnorm()` could generate a sample of random numbers, followed by `sum()` to count number of values below zero, and finally `replicate()` to repeat the process.
+
+
+# Practice Space
+
+## Make your simulation work reproducible
+**🎯:** Set a seed for reproducibility. Using the same seed and running the same random operations in the same order reproduces the results with the same R setup.
+
+```{r}
+# Setting the seed for reproducibility
+set.seed(2025)
+```
+**🗣:** The `set.seed()` function means that the probability of random samples will reproduce the same results, allowing for greater reproducibility.
+
+
+## Simulate what 300 rolls of a fair 20-sided die can look like
+```{r}
+# Code
+big_die <- sample(1:20, size = 300, replace = TRUE)
+
+big_die_counts <- table(big_die)
+```
+```{r}
+# Determining the mean
+mean(big_die)
+```
+```{r}
+# Calculating the average
+round(prop.table(big_die_counts), 3)
+range(big_die_counts)
+mean(big_die == 20)   # I didn't understand what I was supposed to put here based on the textbook chapter.
+```
+**🗣:** The simulated probability appears relatively consistent with a fair-dice model in that probabilities are relatively even across values 1:20 with some minor discrepancies. A `probability()` check would probably even the calculation.
+
+## Simulate dice rolls from a fair 20-sided die
+
+### D20 marathon
+**🎯:** Simulate 5221 rolls of a fair 20-sided die. Store as `boring_weekend` using `sample()`.
+
+```{r}
+# Setup
+boring_weekend <- sample(1:20, size = 5221, replace = TRUE)
+```
+
+### Quick frequency check
+**🎯:** Create d20_counts: a table of how many times each face appeared.
+
+```{r}
+# Code
+d20_counts <- table(boring_weekend)
+```
+```{r}
+# Check
+print(d20_counts)
+```
+**🗣:** The values in `boring_weekend` seem to aggregate around the same range (e.g., about 230 to 280).
+
+### Hit rate
+**🎯:** Find the proportion of rolls that were natural 20s. Then compare that result to the fair-die benchmark of 0.05.
+
+```{r}
+# Code
+mean(boring_weekend == 20)
+abs(mean(boring_weekend == 20) - 0.05) # I'm not sure what this function does, and ?abs didn't really explain it to me in a way I understood.
+```
+**🗣:** The 
+
+## Calculate the size of blankets needed for newborns.
+
+### Baby-blanket test
+**🎯:** Simulate one week of 100 newborn lengths (inches) with mean 20.0, SD 0.9. Store as `blanketed_babies`. Use `rnorm()`.
+
+```{r}
+# Setup
+blanketed_babies <- rnorm(100, mean = 20, sd = 0.9)
+```
+
+### Check how many babies are over 23 inches long
+**🎯:** Using any(), check whether any babies in blanketed_babies are longer than 23 inches. Then count how many are over 23 inches. Do not store the result as a new object.
+
+```{r}
+# Check
+any(blanketed_babies > 23)
+sum(blanketed_babies > 23)
+```
+**🗣:** Based on the probabilities ran in `blanketed_babies`, whether there were any babies longer than 23 inches was `{r} any(blanketed_babies > 23)`, and included `{r} sum(blanketed_babies > 23)` values.
+
+### Week-to-week risk
+**🎯** Repeat Steps 1 and 2 for 1000 simulated weeks, with 100 newborns per week. Store a vector named `weeks_too_long` that records, for each simulated week, how many babies were longer than 23 inches. Hint: use `replicate()`.
+
+```{r}
+# Code
+weeks_too_long <- replicate(1000, sum(rnorm(100, mean = 20, sd = 0.9) > 23))
+```
+```{r}
+# Check
+table(weeks_too_long)
+mean(weeks_too_long)
+mean(weeks_too_long > 0)
+max(weeks_too_long)
+```
+**🗣:** In these 1000 simulated weeks, only 40 out of 1000 trials included a baby longer than 23 inches. The maximum value was `{r} max(weeks_too_long)`, which suggests the hospital should include at least 2 larger blankets, and possibly more, depending on how long the average and maximum stay for those newborns is.
+
+
+## Final reflection
+**📝:** The `replicate()` function was useful to show what the statistic aggregate of a single trial ran multiple times was. In **Week-to-week risk**, for example, `replicate()` allowed us to see whether newborns over 23 inches appeared on a week-to-week risk, rather than within only a single, simulated week. A risk of using only a single simulated week is that it is misrepresentative of the potential niche cases, like in 38 trials where there was at least one newborn above 23 inches, and in 1 tral where there were two.
+
+
+
+
+
+
+
+
+
+
+
